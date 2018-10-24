@@ -1,6 +1,7 @@
 package models;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Point {
 
@@ -30,6 +31,19 @@ public class Point {
 
     public void setCostsList(HashMap<String, Integer> costsList) {
         this.costsList = costsList;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Point point = (Point) o;
+        return Objects.equals(name, point.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     @Override

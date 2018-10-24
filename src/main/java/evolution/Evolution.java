@@ -61,8 +61,8 @@ public class Evolution {
                 break;
         }
         this.generation.getPairingCanidates().addAll(select.select());
-        System.out.println(this.generation.getPairingCanidates());
-        System.out.println(this.generation.getPairingCanidates());
+        System.out.println("Select(): " + this.generation.getPairingCanidates());
+        System.out.println("Select(): " + this.generation.getPairingCanidates().size());
     }
 
     public void combine() {
@@ -70,6 +70,7 @@ public class Evolution {
 
         //TODO: CrossOver
         SelectionProcessInterface<Point> select = new SelectCrossPair<>(this.generation.getPairingCanidates());
+        System.out.println("combine() PairingCanidates:" + select.toString());
         for (int i = 0; i < populationSize; i++) {
             List<Chromosome<Point>> crossList = select.select();
             if (crossList.size() != 2) {
@@ -77,7 +78,7 @@ public class Evolution {
                 continue;
             }
             double propability = Math.random();
-            if (propability < this.combinationProb) {
+            if (propability < this.combinationProb) { //TODO: switch case
                 CombinationProcessInterface<Point> comb = new CombinationProcessKeepFirstPerc<>(crossList.get(0), crossList.get(1));
                 newGen.add(comb.crossOver());
             } else {

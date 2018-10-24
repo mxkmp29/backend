@@ -12,9 +12,10 @@ public class Main {
 
         Generation<Point> generation = new Generation<>(100, Data.cities);
 
-        Evolution evolution = new Evolution(100, 10, 0, 0);
+        Evolution evolution = new Evolution(100, 10, 0, 0.3f);
         evolution.fitness();
         evolution.select();
+        evolution.combine();
 
     }
 }
