@@ -1,15 +1,20 @@
 package models;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Point {
 
     private String name;
-    private Map<String, Integer> costsList;
+    private HashMap<String, Integer> costsList = new HashMap<String, Integer>();
 
-    public Point(String name, int distance, Map<String, Integer> attributeList) {
+    public Point(String name) {
         this.name = name;
-        this.costsList = attributeList;
+    }
+
+    public Point(String name, HashMap<String, Integer> costsList) {
+        this.name = name;
+        this.costsList = costsList;
     }
 
     public String getName() {
@@ -20,13 +25,20 @@ public class Point {
         this.name = name;
     }
 
-
-    public Map<String, Integer> getAttributeList() {
+    public HashMap<String, Integer> getCostsList() {
         return costsList;
     }
 
-    public void setAttributeList(Map<String, Integer> attributeList) {
-        this.costsList = attributeList;
+    public void setCostsList(HashMap<String, Integer> costsList) {
+        this.costsList = costsList;
+    }
+
+    @Override
+    public String toString() {
+        return "Point{" +
+                "name='" + name + '\'' +
+                ", costsList=" + costsList +
+                '}';
     }
 }
 

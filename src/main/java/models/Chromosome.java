@@ -1,13 +1,10 @@
 package models;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Chromosome<T> {
 
-    private List<T> attributes;
+    private List<T> attributes = new ArrayList<T>();
     private T startingPoint;
 
     public Chromosome(List<T> attributes) {

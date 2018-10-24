@@ -1,10 +1,11 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Generation<T> {
 
-    private List<Chromosome<T>> chromosomeList;
+    private List<Chromosome<T>> chromosomeList = new ArrayList<>();
 
     public Generation(int size, List<T> cities) {
         //TODO: zufällige Liste generieren

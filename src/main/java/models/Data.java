@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Data {
@@ -11,7 +12,7 @@ public class Data {
         //TODO:
     }
 
-    public static List<Point> cities;
+    public static List<Point> cities = new ArrayList<>();
     public static Point startingPoint;
     public static int populationSize;
     public static CombinationProcess chosenCombinationProcess;
