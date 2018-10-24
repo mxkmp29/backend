@@ -1,4 +1,4 @@
-package evolution;
+package evolution.SelectionProcesses;
 
 import models.Chromosome;
 
@@ -7,10 +7,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Best N Elements
+ *
+ * @param <T>
+ */
 public class SelectionProcessBestN<T> implements SelectionProcessInterface<T> {
 
     private List<Chromosome<T>> selectList = new ArrayList<>();
-    private double N = 0.05;
+    private double N = 0;
     private int popSize = 0;
 
     public SelectionProcessBestN(List<Chromosome<T>> selectList, int popSize, double n) {
