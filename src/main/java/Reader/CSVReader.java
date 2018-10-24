@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
 
 public class CSVReader {
 
@@ -40,7 +39,6 @@ public class CSVReader {
                         String destinationName = cityNames[i];
                         int distance = Integer.parseInt(entries[i]);
                         p.getCostsList().put(destinationName, distance);
-                        System.out.println(p);
                     }
                     Data.cities.add(p);
                 }

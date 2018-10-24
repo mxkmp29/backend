@@ -1,7 +1,6 @@
 package models;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class Point {
 
@@ -37,7 +36,7 @@ public class Point {
     public String toString() {
         return "Point{" +
                 "name='" + name + '\'' +
-                ", costsList=" + costsList +
+
                 '}';
     }
 }

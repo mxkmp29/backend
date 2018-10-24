@@ -13,7 +13,7 @@ public class Data {
     }
 
     public static List<Point> cities = new ArrayList<>();
-    public static Point startingPoint;
+    public static int startingPointIndex = 0;
     public static int populationSize;
     public static CombinationProcess chosenCombinationProcess;
     public static SelectionProcess chosenSelectionProcess ;

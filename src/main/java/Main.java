@@ -1,9 +1,14 @@
 import Reader.CSVReader;
+import models.Data;
+import models.Generation;
+import models.Point;
 
 public class Main {
 
     public static void main(String[] args){
         CSVReader reader = new CSVReader("./Examples/Test_01.csv");
         reader.readCsv();
+
+        Generation<Point> generation = new Generation<>(10, Data.cities);
     }
 }

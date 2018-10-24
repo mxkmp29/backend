@@ -8,7 +8,6 @@ public class Generation<T> {
     private List<Chromosome<T>> chromosomeList = new ArrayList<>();
 
     public Generation(int size, List<T> cities) {
-        //TODO: zufällige Liste generieren
         for(int i = 0; i < size; i++){
             Chromosome<T> chromosome = new Chromosome<>(cities);
             try{
@@ -18,6 +17,7 @@ public class Generation<T> {
                 System.err.println(e);
             }
         }
+        System.out.println(this);
     }
 
     public Generation(List<Chromosome<T>> chromosomeList) {
@@ -30,5 +30,12 @@ public class Generation<T> {
 
     public Chromosome<T> getChromosom(int index) {
         return this.chromosomeList.get(index);
+    }
+
+    @Override
+    public String toString() {
+        return "Generation{" +
+                "chromosomeList=" + chromosomeList +
+                '}';
     }
 }

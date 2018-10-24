@@ -8,7 +8,9 @@ public class Chromosome<T> {
     private T startingPoint;
 
     public Chromosome(List<T> attributes) {
-        this.attributes = attributes;
+        for (T attrib : attributes) {
+            this.attributes.add(attrib);
+        }
     }
 
     public List<T> getAttributes() {
@@ -34,9 +36,9 @@ public class Chromosome<T> {
 
     public void repairFunction() throws Exception {
         // startbedingungen -> Vorgegebener Punkt
-        if (this.startingPoint != null) {
+        if (this.startingPoint == null) {
             try{
-                this.startingPoint = (T) Data.startingPoint; //TODO:
+                this.startingPoint = (T) Data.cities.get(Data.startingPointIndex); //TODO:
             }catch(ClassCastException e){
                 System.err.println(e);
             }
@@ -49,7 +51,7 @@ public class Chromosome<T> {
         }
 
         //TODO: reparieren nicht ersetzten
-        if (!this.duplicates(this.attributes)) {
+        if (this.duplicates(this.attributes)) {
             try {
                 this.attributes = (List<T>) Data.cities; //TODO:
                 this.generateRandomChromosom();
@@ -67,5 +69,13 @@ public class Chromosome<T> {
             lump.add(i);
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Chromosome{" +
+                "attributes=" + attributes +
+                ", startingPoint=" + startingPoint +
+                '}';
     }
 }
