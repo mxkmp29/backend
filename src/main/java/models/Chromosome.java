@@ -5,7 +5,7 @@ import java.util.*;
 public class Chromosome<T> {
 
     private List<T> attributes = new ArrayList<T>();
-    private T startingPoint;
+    private int fitness;
 
     public Chromosome(List<T> attributes) {
         for (T attrib : attributes) {
@@ -35,21 +35,6 @@ public class Chromosome<T> {
     }
 
     public void repairFunction() throws Exception {
-        // startbedingungen -> Vorgegebener Punkt
-        if (this.startingPoint == null) {
-            try{
-                this.startingPoint = (T) Data.cities.get(Data.startingPointIndex); //TODO:
-            }catch(ClassCastException e){
-                System.err.println(e);
-            }
-
-        }
-        int idx = this.attributes.indexOf(this.startingPoint);
-        if (idx != 0) {
-            this.attributes.set(idx, this.attributes.get(0));
-            this.attributes.set(0, startingPoint);
-        }
-
         //TODO: reparieren nicht ersetzten
         if (this.duplicates(this.attributes)) {
             try {
@@ -71,11 +56,19 @@ public class Chromosome<T> {
         return false;
     }
 
+    public int getFitness() {
+        return fitness;
+    }
+
+    public void setFitness(int fitness) {
+        this.fitness = fitness;
+    }
+
     @Override
     public String toString() {
         return "Chromosome{" +
                 "attributes=" + attributes +
-                ", startingPoint=" + startingPoint +
+                ", fitness=" + fitness +
                 '}';
     }
 }
