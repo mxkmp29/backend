@@ -60,7 +60,7 @@ public class Evolution {
                 select = new SelectionProcessFirstN<>(this.generation.getChromosomList(), this.populationSize, this.selectNPercent);
                 break;
         }
-        this.generation.getPairingCanidates().addAll(select.select())
+        this.generation.getPairingCanidates().addAll(select.select());
         System.out.println(this.generation.getPairingCanidates());
         System.out.println(this.generation.getPairingCanidates());
     }
