@@ -1,4 +1,4 @@
-package evolution.SelectionProcesses;
+package evolution.selectionProcesses;
 
 import models.Chromosome;
 
@@ -24,7 +24,7 @@ public class SelectCrossPair<T> implements SelectionProcessInterface<T> {
         List<Chromosome<T>> list = new ArrayList<>();
         list.add(this.selectList.get(one));
         list.add(this.selectList.get(two));
-        System.out.println("SelectCrossPair:select()" + list);
+        //System.out.println("SelectCrossPair:select()" + list);
         //System.out.println("SelectCrossPair:select()" + list.size());
         return list;
     }

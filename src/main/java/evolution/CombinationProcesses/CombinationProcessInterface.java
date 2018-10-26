@@ -1,4 +1,4 @@
-package evolution.CombinationProcesses;
+package evolution.combinationProcesses;
 
 import models.Chromosome;
 

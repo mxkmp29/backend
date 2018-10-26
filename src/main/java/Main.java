@@ -12,10 +12,14 @@ public class Main {
 
         Generation<Point> generation = new Generation<>(100, Data.cities);
 
-        Evolution evolution = new Evolution(100, 10, 0, 0.3f);
-        evolution.fitness();
-        evolution.select();
-        evolution.combine();
-
+        Evolution evolution = new Evolution(100, 10000, 10, 0, 0.3f);
+        while(evolution.getGenNumber() <= evolution.getGenerationsToSimulate()) {
+            evolution.evaluate();
+            evolution.select();
+            evolution.newGeneration(evolution.combine());
+            System.out.println("Generation number: " + evolution.getGenNumber());
+        }
+        System.out.println("Simulation finished.");
+        System.out.println("Best candidate: " + evolution.getBestCandidate().toString());
     }
 }
