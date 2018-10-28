@@ -3,6 +3,8 @@ package evolution;
 
 import evolution.combinationProcesses.CombinationProcessInterface;
 import evolution.combinationProcesses.CombinationProcessKeepFirstPerc;
+import evolution.combinationProcesses.CombinationProcessThreeThree;
+import evolution.enums.CombinationProcess;
 import evolution.selectionProcesses.SelectCrossPair;
 import evolution.selectionProcesses.SelectionProcessBestN;
 import evolution.selectionProcesses.SelectionProcessFirstN;
@@ -18,29 +20,28 @@ import java.util.List;
 
 public class Evolution {
 
-    private int genNumber = 1;
+    private int genNumber = 0;
     private Chromosome<Point> bestCandidate;
 
     private int generationsToSimulate = 0;
     private int populationSize = 0;
-    private int numbersToMutate = 0;
-    private float mutationProb = 0.0f; // Mutationswahrscheinlichkeit
+    private double mutationProb = 0.0; // Mutationswahrscheinlichkeit
     private float combinationProb = 0.3f; //Kombinationswahrscheinlichkeit
-    private float selectNPercent = 0.30f;
+    private float selectNPercent = 0.40f;
     private Generation<Point> generation;
 
     private SelectionProcess selectionProcess = SelectionProcess.TOPN;
+    private CombinationProcess combinationProcess = CombinationProcess.KEEP_FIRST_PERC;
 
-    public Evolution(int generations, int populationSize, int numbersToMutate, float mutationProb, float combinationProb) {
+    public Evolution(int generations, int populationSize, double mutationProb, float combinationProb) {
         this.generationsToSimulate = generations;
         this.populationSize = populationSize;
-        this.numbersToMutate = numbersToMutate;
         this.mutationProb = mutationProb;
         this.combinationProb = combinationProb;
         this.generation = new Generation<Point>(populationSize, Data.cities);
     }
 
-    public void evaluate() {
+    private void evaluate() {
         for (Chromosome<Point> p : generation.getChromosomList()) {
             int sum = 0;
             for (int i = 0; i < p.getAttributes().size(); i++) {
@@ -55,7 +56,7 @@ public class Evolution {
         }
     }
 
-    public void select() {
+    private void select() {
         SelectionProcessInterface<Point> select;
         switch (this.selectionProcess) {
             case TOPN:
@@ -68,16 +69,16 @@ public class Evolution {
                 select = new SelectionProcessFirstN<>(this.generation.getChromosomList(), this.populationSize, this.selectNPercent);
                 break;
         }
-        this.generation.getPairingCanidates().addAll(select.select());
-        System.out.println("Select(): " + this.generation.getPairingCanidates());
-        System.out.println("Select(): " + this.generation.getPairingCanidates().size());
+        this.generation.getMatingPool().addAll(select.select());
+        //System.out.println("Select(): " + this.generation.getMatingPool());
+        //System.out.println("Select(): " + this.generation.getMatingPool().size());
     }
 
-    public List<Chromosome<Point>> combine() {
+    private void combine() {
         List<Chromosome<Point>> newGen = new ArrayList<>();
 
         //TODO: CrossOver
-        SelectionProcessInterface<Point> select = new SelectCrossPair<>(this.generation.getPairingCanidates());
+        SelectionProcessInterface<Point> select = new SelectCrossPair<>(this.generation.getMatingPool());
         for (int i = 0; i < populationSize; i++) {
             List<Chromosome<Point>> crossList = select.select();
             if (crossList.size() != 2) {
@@ -86,35 +87,72 @@ public class Evolution {
             }
             double propability = Math.random();
             if (propability < this.combinationProb) { //TODO: switch case
-                CombinationProcessInterface<Point> comb = new CombinationProcessKeepFirstPerc<>(crossList.get(0), crossList.get(1));
+                CombinationProcessInterface<Point> comb;
+                switch(this.combinationProcess) {
+                    case THREE_THREE:
+                        comb = new CombinationProcessThreeThree<>(crossList.get(0), crossList.get(1));
+                        break;
+                    case KEEP_FIRST_PERC:
+                        comb = new CombinationProcessKeepFirstPerc<>(crossList.get(0), crossList.get(1));
+                        break;
+                    default:
+                        comb = new CombinationProcessKeepFirstPerc<>(crossList.get(0), crossList.get(1));
+                }
                 newGen.add(comb.crossOver());
             } else {
                 //TODO: kein crossover -> zufällige chromosome in neue generation
                 newGen.add(crossList.get(0));
             }
         }
-        return newGen;
-    }
-
-    public Chromosome<Point> mutation() {
-        return new Chromosome<Point>(null);
-    }
-
-    public void newGeneration(List<Chromosome<Point>> generation) {
-        this.generation = new Generation(generation);
         genNumber++;
+        generation = new Generation<>(newGen);
     }
 
-    public int getGenNumber() {
-        return genNumber;
+    private void mutate() {
+        for(Chromosome<Point> chr : generation.getChromosomeList()) {
+            double rand = Math.random();
+            if (rand <= mutationProb) {
+                int gen1 = (int) (Math.random() * chr.getAttributes().size());
+                int gen2 = (int) (Math.random() * chr.getAttributes().size());
+                Point temp = chr.getAttribute(gen1);
+                chr.setAttribute(gen1, chr.getAttribute(gen2));
+                chr.setAttribute(gen2, temp);
+            }
+        }
     }
 
-    public int getGenerationsToSimulate() {
-        return generationsToSimulate;
+    public void runEvolution() {
+        int bestChanged = 0;
+        Chromosome<Point> oldBest;
+        while (bestChanged < 100) {
+            oldBest = bestCandidate;
+       // while(genNumber < generationsToSimulate) {
+            evaluate();
+            select();
+            combine();
+            mutate();
+            if (bestCandidate != oldBest) {
+                bestChanged = 0;
+            } else {
+                bestChanged++;
+            }
+        }
+
+        System.out.println("Simulation finished.");
+        System.out.println("Simulated " + genNumber + " generations. With " + populationSize + " chromosomes in each generation.");
+        System.out.println("Best candidate: " + bestCandidate.toString());
     }
 
     public Chromosome<Point> getBestCandidate() {
         return bestCandidate;
+    }
+
+    public void setSelectionProcess(SelectionProcess selectionProcess) {
+        this.selectionProcess = selectionProcess;
+    }
+
+    public void setCombinationProcess(CombinationProcess combinationProcess) {
+        this.combinationProcess = combinationProcess;
     }
 }
 

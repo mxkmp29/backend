@@ -6,7 +6,7 @@ import java.util.List;
 public class Generation<T> {
 
     private List<Chromosome<T>> chromosomeList = new ArrayList<>();
-    private List<Chromosome<T>> pairingCanidates = new ArrayList<>();
+    private List<Chromosome<T>> matingPool = new ArrayList<>();
 
     public Generation(int size, List<T> cities) {
         for(int i = 0; i < size; i++){
@@ -18,7 +18,6 @@ public class Generation<T> {
                 System.err.println(e);
             }
         }
-        System.out.println(this);
     }
 
     public Generation(List<Chromosome<T>> chromosomeList) {
@@ -41,12 +40,12 @@ public class Generation<T> {
         this.chromosomeList = chromosomeList;
     }
 
-    public List<Chromosome<T>> getPairingCanidates() {
-        return pairingCanidates;
+    public List<Chromosome<T>> getMatingPool() {
+        return matingPool;
     }
 
-    public void setPairingCanidates(List<Chromosome<T>> pairingCanidates) {
-        this.pairingCanidates = pairingCanidates;
+    public void setMatingPool(List<Chromosome<T>> matingPool) {
+        this.matingPool = matingPool;
     }
 
     @Override

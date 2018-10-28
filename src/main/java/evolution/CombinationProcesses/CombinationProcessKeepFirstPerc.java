@@ -12,8 +12,8 @@ import java.util.List;
  */
 public class CombinationProcessKeepFirstPerc<T> implements CombinationProcessInterface<T> {
 
-    Chromosome<T> chromosome1;
-    Chromosome<T> chromosome2;
+    private Chromosome<T> chromosome1;
+    private Chromosome<T> chromosome2;
 
     public CombinationProcessKeepFirstPerc(Chromosome<T> chromosome1, Chromosome<T> chromosome2) {
         this.chromosome1 = chromosome1;
