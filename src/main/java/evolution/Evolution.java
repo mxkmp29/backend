@@ -43,17 +43,23 @@ public class Evolution {
      */
     private void evaluate() {
         for (Chromosome<Point> p : generation.getChromosomList()) {
-            int sum = 0;
-            for (int i = 0; i < p.getAttributes().size(); i++) {
-                Point pThis = p.getAttribute(i);
-                Point pNext = p.getAttribute((i + 1) % p.getAttributes().size());
-                sum += pThis.getCostsList().get(pNext.getName());
-            }
+            int sum = this.fitness(p);
             p.setFitness(sum);
+            generation.addToOveralFitness(sum);
             if (generation.getBestCandidate() == null || sum < generation.getBestCandidate().getFitness()) {
                 generation.setBestCandidate(p);
             }
         }
+    }
+
+    private int fitness(Chromosome<Point> chromosome) {
+        int sum = 0;
+        for (int i = 0; i < chromosome.getAttributes().size(); i++) {
+            Point pThis = chromosome.getAttribute(i);
+            Point pNext = chromosome.getAttribute((i + 1) % chromosome.getAttributes().size());
+            sum += pThis.getCostsList().get(pNext.getName());
+        }
+        return sum;
     }
 
     /**
@@ -91,7 +97,7 @@ public class Evolution {
                 continue;
             }
             double propability = Math.random();
-            if (propability < this.combinationProb) { //TODO: switch case
+            if (propability < this.combinationProb) {
                 CombinationProcessInterface<Point> comb;
                 switch(this.combinationProcess) {
                     case THREE_THREE:
@@ -140,7 +146,7 @@ public class Evolution {
             } else {
                 bestChanged++;
             }
-            System.out.println("Generation: " + generation.getGenerationNumber() + " Best candiate: " + generation.getBestCandidate().toString());
+            System.out.println("Generation: " + generation.getGenerationNumber() + " Best candidate: " + generation.getBestCandidate().toString());
         }
 
         System.out.println("Simulation finished.");

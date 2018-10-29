@@ -9,6 +9,7 @@ public class Generation<T> {
     private List<Chromosome<T>> matingPool = new ArrayList<>();
     private Chromosome<T> bestCandidate;
     private int generationNumber = 0;
+    private int overallFitness = 0;
 
     public Generation(int size, List<T> cities) {
         for(int i = 0; i < size; i++){
@@ -69,6 +70,18 @@ public class Generation<T> {
 
     public int getGenerationNumber() {
         return generationNumber;
+    }
+
+    public int getOverallFitness() {
+        return overallFitness;
+    }
+
+    public void setOverallFitness(int overallFitness) {
+        this.overallFitness = overallFitness;
+    }
+
+    public void addToOveralFitness(int fitness) {
+        this.overallFitness += fitness;
     }
 
     @Override

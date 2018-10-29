@@ -6,6 +6,7 @@ public class Chromosome<T> {
 
     private List<T> attributes = new ArrayList<T>();
     private int fitness;
+    private float survivalProb = 0.0f;
 
     public Chromosome(List<T> attributes) {
         for (T attrib : attributes) {
@@ -62,6 +63,14 @@ public class Chromosome<T> {
 
     public void setFitness(int fitness) {
         this.fitness = fitness;
+    }
+
+    public float getSurvivalProb() {
+        return survivalProb;
+    }
+
+    public void setSurvivalProb(float survivalProb) {
+        this.survivalProb = survivalProb;
     }
 
     @Override
