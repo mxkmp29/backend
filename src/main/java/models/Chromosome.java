@@ -5,8 +5,8 @@ import java.util.*;
 public class Chromosome<T> {
 
     private List<T> attributes = new ArrayList<T>();
-    private int fitness;
-    private float survivalProb = 0.0f;
+    private float fitness = 0.0f;
+    private double survivalProb = 0.0f;
 
     public Chromosome(List<T> attributes) {
         for (T attrib : attributes) {
@@ -57,19 +57,19 @@ public class Chromosome<T> {
         return false;
     }
 
-    public int getFitness() {
+    public float getFitness() {
         return fitness;
     }
 
-    public void setFitness(int fitness) {
+    public void setFitness(float fitness) {
         this.fitness = fitness;
     }
 
-    public float getSurvivalProb() {
+    public double getSurvivalProb() {
         return survivalProb;
     }
 
-    public void setSurvivalProb(float survivalProb) {
+    public void setSurvivalProb(double survivalProb) {
         this.survivalProb = survivalProb;
     }
 
@@ -78,6 +78,7 @@ public class Chromosome<T> {
         return "Chromosome{" +
                 "attributes=" + attributes +
                 ", fitness=" + fitness +
+                ", survivalProb=" + survivalProb +
                 '}';
     }
 }

@@ -29,7 +29,7 @@ public class SelectionProcessBestN<T> implements SelectionProcessInterface<T> {
         Collections.sort(this.selectList, new Comparator<Chromosome<T>>() {
             @Override
             public int compare(Chromosome<T> o1, Chromosome<T> o2) {
-                return o1.getFitness() - o2.getFitness();
+                return Float.compare(o1.getFitness(), o2.getFitness());
             }
         });
         List<Chromosome<T>> topNList = new ArrayList<>();

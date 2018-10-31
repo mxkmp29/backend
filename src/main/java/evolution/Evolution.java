@@ -6,10 +6,7 @@ import evolution.combinationProcesses.CombinationProcessKeepFirstPerc;
 import evolution.combinationProcesses.CombinationProcessThreeThree;
 import evolution.enums.CombinationProcess;
 import evolution.enums.SelectionProcess;
-import evolution.selectionProcesses.SelectCrossPair;
-import evolution.selectionProcesses.SelectionProcessBestN;
-import evolution.selectionProcesses.SelectionProcessFirstN;
-import evolution.selectionProcesses.SelectionProcessInterface;
+import evolution.selectionProcesses.*;
 import models.Chromosome;
 import models.Data;
 import models.Generation;
@@ -43,17 +40,17 @@ public class Evolution {
      */
     private void evaluate() {
         for (Chromosome<Point> p : generation.getChromosomList()) {
-            int sum = this.fitness(p);
+            float sum = this.fitness(p);
             p.setFitness(sum);
-            generation.addToOveralFitness(sum);
+            generation.incrementOverallFitness(sum);
             if (generation.getBestCandidate() == null || sum < generation.getBestCandidate().getFitness()) {
                 generation.setBestCandidate(p);
             }
         }
     }
 
-    private int fitness(Chromosome<Point> chromosome) {
-        int sum = 0;
+    private float fitness(Chromosome<Point> chromosome) {
+        float sum = 0;
         for (int i = 0; i < chromosome.getAttributes().size(); i++) {
             Point pThis = chromosome.getAttribute(i);
             Point pNext = chromosome.getAttribute((i + 1) % chromosome.getAttributes().size());
@@ -61,6 +58,7 @@ public class Evolution {
         }
         return sum;
     }
+
 
     /**
      *
@@ -74,6 +72,8 @@ public class Evolution {
             case FIRSTN:
                 select = new SelectionProcessFirstN<>(this.generation.getChromosomList(), this.populationSize, this.selectNPercent);
                 break;
+            case SURIVAL:
+                select = new SelectSurvivalOfTheFittest(this.generation.getChromosomeList(), this.selectNPercent, this.generation.getOverallFitness());
             default:
                 select = new SelectionProcessFirstN<>(this.generation.getChromosomList(), this.populationSize, this.selectNPercent);
                 break;
