@@ -1,26 +1,29 @@
-package Reader;
+package reader;
 
 import models.Data;
 import models.Point;
+import models.Point2D;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class CSVReader {
+public class Point2DReader implements CSVReaderInterface{
+
 
     private String csvFile;
     private static String cvsSplitBy = ";";
     private static String[] cityNames;
 
-    public CSVReader() {
+    public Point2DReader() {
     }
 
-    public CSVReader(String csvFile) {
+    public Point2DReader(String csvFile) {
         this.csvFile = csvFile;
     }
 
+    @Override
     public void readCsv() {
         String line = "";
         BufferedReader br = null;
@@ -29,19 +32,10 @@ public class CSVReader {
             br = new BufferedReader(new FileReader(csvFile));
             while ((line = br.readLine()) != null) {
                 // use comma as separator
+
                 String[] entries = line.split(cvsSplitBy);
-                if (idx == 0) {
-                    cityNames = entries;
-                } else {
-                    String name = entries[0];
-                    Point p = new Point(name);
-                    for (int i = 1; i < entries.length; i++) {
-                        String destinationName = cityNames[i];
-                        int distance = Integer.parseInt(entries[i]);
-                        p.getCostsList().put(destinationName, distance);
-                    }
-                    Data.cities.add(p);
-                }
+                Point2D point = new Point2D(entries[0], Integer.parseInt(entries[1]), Integer.parseInt(entries[2]));
+                Data.cities2d.add(point);
                 idx++;
             }
         } catch (FileNotFoundException e) {
@@ -57,6 +51,5 @@ public class CSVReader {
                 }
             }
         }
-
     }
 }

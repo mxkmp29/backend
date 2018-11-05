@@ -7,15 +7,17 @@ import evolution.combinationProcesses.CombinationProcessThreeThree;
 import evolution.enums.CombinationProcess;
 import evolution.enums.SelectionProcess;
 import evolution.selectionProcesses.*;
-import models.Chromosome;
-import models.Data;
-import models.Generation;
-import models.Point;
+import io.socket.emitter.Emitter;
+import models.*;
+import server.ServerEvents;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Evolution {
+
+    io.socket.client.Socket socket = new SocketConnector().getSocket();
 
     private int generationsToSimulate = 0;
     private int populationSize = 0;
@@ -132,6 +134,14 @@ public class Evolution {
     }
 
     public void runEvolution() {
+        this.socket.emit(ServerEvents.START, "TEST");
+        this.socket.on(ServerEvents.START, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                System.out.println("SOCKETIO: " + Arrays.toString(args));
+            }
+        });
+
         int bestChanged = 0;
         Chromosome<Point> oldBest;
         while (bestChanged < 100) {
@@ -146,13 +156,17 @@ public class Evolution {
             } else {
                 bestChanged++;
             }
-            System.out.println("Generation: " + generation.getGenerationNumber() + " Best candidate: " + generation.getBestCandidate().toString());
-        }
 
+            //System.out.println("Generation: " + generation.getGenerationNumber() + " Best candidate: " + generation.getBestCandidate().toString());
+        }
+        this.socket.emit(ServerEvents.START, generation.getBestCandidate().toJSON());
+        System.out.println(generation.getBestCandidate().toJSON());
         System.out.println("Simulation finished.");
         System.out.println("Simulated " + generation.getGenerationNumber() + " generations. With " + populationSize + " chromosomes in each generation.");
         System.out.println("Best candidate: " + generation.getBestCandidate().toString());
+        System.exit(1);
     }
+
 
     public void setSelectionProcess(SelectionProcess selectionProcess) {
         this.selectionProcess = selectionProcess;

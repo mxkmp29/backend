@@ -1,4 +1,4 @@
-package httpserver;
+package server;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -16,7 +16,8 @@ public class SimpleHttpServer {
     private HttpHandler handler;
     private int port = 8000;
 
-    public SimpleHttpServer() throws Exception {
+    public SimpleHttpServer(int port) {
+        this.port = port;
     }
 
     public void createServer() throws Exception {
@@ -24,7 +25,7 @@ public class SimpleHttpServer {
         handler = new HttpHandler() {
             @Override
             public void handle(HttpExchange httpExchange) throws IOException {
-                BufferedReader br = new BufferedReader(new FileReader("./Examples" + httpExchange.getRequestURI().getPath()));
+                BufferedReader br = new BufferedReader(new FileReader("./www" + httpExchange.getRequestURI().getPath()));
                 httpExchange.sendResponseHeaders(200, 0);
                 OutputStream os = httpExchange.getResponseBody();
                 String line = "";
