@@ -12,42 +12,31 @@ public class SelectSurvivalOfTheFittest<T> implements SelectionProcessInterface<
     private List<Chromosome<T>> selectList = new ArrayList<>();
     private double percent = 0.0;
     private double overAllFitness = 0.0;
+    private int count;
 
-    public SelectSurvivalOfTheFittest(List<Chromosome<T>> selectList, double percent, double overAllFitness) {
+
+    public SelectSurvivalOfTheFittest(List<Chromosome<T>> selectList, double overAllFitness, int count) {
         this.selectList = selectList;
         this.overAllFitness = overAllFitness;
+        this.count = count;
     }
 
     @Override
     public List<Chromosome<T>> select() {
         this.calcSurvivalProbability();
-
-        Collections.sort(this.selectList, new Comparator<Chromosome<T>>() {
-            @Override
-            public int compare(Chromosome<T> o1, Chromosome<T> o2) {
-                return Double.compare(o1.getSurvivalProb(), o2.getSurvivalProb());
-            }
-        });
-
         List<Chromosome<T>> list = new ArrayList<>();
 
-        for (int k = 0; k < this.selectList.size() / this.percent; k++) {
+        for (int k = 0; k < this.count; k++) {
             for (int i = 0; i < this.selectList.size(); i++) {
                 boolean flagged = false;
                 double r = Math.random();
                 double sum = 0.0;
-                for (int j = 0; j <= this.selectList.size(); j++) {
+                for (int j = 0; j < this.selectList.size(); j++) {
                     Chromosome<T> chromosome = this.selectList.get(j);
 
-                    if (j != 0) {
-                        sum += chromosome.getSurvivalProb();
-                    } else {
-
-                    }
-
                     if (sum <= r) {
-                        double sum2 = sum + this.selectList.get(j + 1).getSurvivalProb();
-                        if (r < sum2) {
+                        sum += chromosome.getSurvivalProb();
+                        if (r < sum) {
                             list.add(chromosome);
                             flagged = true;
                             break;

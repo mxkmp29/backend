@@ -23,8 +23,9 @@ public class Evolution {
     private float combinationProb = 0.3f; //Kombinationswahrscheinlichkeit
     private float selectNPercent = 0.40f;
     private Generation<Point> generation;
+    private int selectFromMatingPool = 0;
 
-    private SelectionProcess selectionProcess = SelectionProcess.TOPN;
+    private SelectionProcess selectionProcess = SelectionProcess.SURIVAL;
     private CombinationProcess combinationProcess = CombinationProcess.KEEP_FIRST_PERC;
 
     public Evolution(int generations, int populationSize, double mutationProb, float combinationProb) {
@@ -65,22 +66,27 @@ public class Evolution {
      */
     private void select() {
         SelectionProcessInterface<Point> select;
-        switch (this.selectionProcess) {
-            case TOPN:
-                select = new SelectionProcessBestN<>(this.generation.getChromosomList(), this.populationSize, this.selectNPercent);
+        switch(this.selectFromMatingPool) {
+            case 0:
                 break;
-            case FIRSTN:
-                select = new SelectionProcessFirstN<>(this.generation.getChromosomList(), this.populationSize, this.selectNPercent);
-                break;
-            case SURIVAL:
-                select = new SelectSurvivalOfTheFittest(this.generation.getChromosomeList(), this.selectNPercent, this.generation.getOverallFitness());
             default:
-                select = new SelectionProcessFirstN<>(this.generation.getChromosomList(), this.populationSize, this.selectNPercent);
+                switch (this.selectionProcess) {
+                    case TOPN:
+                        select = new SelectionProcessBestN<>(this.generation.getChromosomList(), this.populationSize, this.selectNPercent);
+                        break;
+                    case FIRSTN:
+                        select = new SelectionProcessFirstN<>(this.generation.getChromosomList(), this.populationSize, this.selectNPercent);
+                        break;
+                    case SURIVAL:
+                        select = new SelectSurvivalOfTheFittest(this.generation.getChromosomeList(), this.generation.getOverallFitness(), Math.round(this.populationSize * selectNPercent));
+                    default:
+                        select = new SelectionProcessFirstN<>(this.generation.getChromosomList(), this.populationSize, this.selectNPercent);
+                        break;
+                }
+                this.generation.getMatingPool().addAll(select.select());
                 break;
         }
-        this.generation.getMatingPool().addAll(select.select());
-        //System.out.println("Select(): " + this.generation.getMatingPool());
-        //System.out.println("Select(): " + this.generation.getMatingPool().size());
+        
     }
 
     /**
@@ -88,8 +94,19 @@ public class Evolution {
      */
     private void combine() {
         List<Chromosome<Point>> newGen = new ArrayList<>();
+        SelectionProcessInterface<Point> select;
 
-        SelectionProcessInterface<Point> select = new SelectCrossPair<>(this.generation.getMatingPool());
+        switch(selectFromMatingPool) {
+
+            case 0:
+                select = new SelectSurvivalOfTheFittest<>(this.generation.getChromosomeList(), this.generation.getOverallFitness(), 2);
+                break;
+            default:
+                select = new SelectCrossPair<>(this.generation.getMatingPool());
+                break;
+
+        }
+
         for (int i = 0; i < populationSize; i++) {
             List<Chromosome<Point>> crossList = select.select();
             if (crossList.size() != 2) {
