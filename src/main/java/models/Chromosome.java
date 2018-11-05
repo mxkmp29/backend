@@ -14,6 +14,13 @@ public class Chromosome<T> {
         }
     }
 
+    public Chromosome(List<T> attributes, float fitness) {
+        for (T attrib : attributes) {
+            this.attributes.add(attrib);
+        }
+        this.fitness = fitness;
+    }
+
     public List<T> getAttributes() {
         return attributes;
     }

@@ -21,19 +21,22 @@ public class Evolution {
     private int populationSize = 0;
     private double mutationProb = 0.0; // Mutationswahrscheinlichkeit
     private float combinationProb = 0.3f; //Kombinationswahrscheinlichkeit
-    private float selectNPercent = 0.40f;
+    private float selectNPercent = 0.20f;
     private Generation<Point> generation;
     private int selectFromMatingPool = 0;
+    private int criteria = 0;
 
     private SelectionProcess selectionProcess = SelectionProcess.SURIVAL;
     private CombinationProcess combinationProcess = CombinationProcess.KEEP_FIRST_PERC;
 
-    public Evolution(int generations, int populationSize, double mutationProb, float combinationProb) {
+    public Evolution(int generations, int populationSize, double mutationProb, float combinationProb, int selectFromMatingPool, int criteria) {
         this.generationsToSimulate = generations;
         this.populationSize = populationSize;
         this.mutationProb = mutationProb;
         this.combinationProb = combinationProb;
         this.generation = new Generation<Point>(populationSize, Data.cities);
+        this.selectFromMatingPool = selectFromMatingPool;
+        this.criteria = criteria;
     }
 
     /**
@@ -45,7 +48,8 @@ public class Evolution {
             p.setFitness(sum);
             generation.incrementOverallFitness(sum);
             if (generation.getBestCandidate() == null || sum < generation.getBestCandidate().getFitness()) {
-                generation.setBestCandidate(p);
+                Chromosome<Point> pn = new Chromosome<>(p.getAttributes(), p.getFitness());
+                generation.setBestCandidate(pn);
             }
         }
     }
@@ -86,7 +90,6 @@ public class Evolution {
                 this.generation.getMatingPool().addAll(select.select());
                 break;
         }
-        
     }
 
     /**
@@ -99,7 +102,20 @@ public class Evolution {
         switch(selectFromMatingPool) {
 
             case 0:
-                select = new SelectSurvivalOfTheFittest<>(this.generation.getChromosomeList(), this.generation.getOverallFitness(), 2);
+                switch (this.selectionProcess) {
+                    case TOPN:
+                        select = new SelectionProcessBestN<>(this.generation.getChromosomList(), 1, 2);
+                        break;
+                    case FIRSTN:
+                        select = new SelectionProcessFirstN<>(this.generation.getChromosomList(), 1, 2);
+                        break;
+                    case SURIVAL:
+                        select = new SelectSurvivalOfTheFittest(this.generation.getChromosomeList(), this.generation.getOverallFitness(), 2);
+                    break;
+                    default:
+                        select = new SelectionProcessFirstN<>(this.generation.getChromosomList(), 1, 2);
+                        break;
+                }
                 break;
             default:
                 select = new SelectCrossPair<>(this.generation.getMatingPool());
@@ -132,7 +148,7 @@ public class Evolution {
                 newGen.add(crossList.get(0));
             }
         }
-        generation = new Generation<>(newGen, generation);
+        generation = new Generation<>(newGen, this.generation);
     }
 
     private void mutate() {
@@ -151,21 +167,32 @@ public class Evolution {
     public void runEvolution() {
         int bestChanged = 0;
         Chromosome<Point> oldBest;
-        while (bestChanged < 100) {
-            oldBest = generation.getBestCandidate();
-       // while(genNumber < generationsToSimulate) {
-            evaluate();
-            select();
-            combine();
-            mutate();
-            if (generation.getBestCandidate() != oldBest) {
-                bestChanged = 0;
-            } else {
-                bestChanged++;
-            }
-            System.out.println("Generation: " + generation.getGenerationNumber() + " Best candidate: " + generation.getBestCandidate().toString());
+        switch(criteria) {
+            case 0:
+                while (bestChanged < 100) {
+                    oldBest = generation.getBestCandidate();
+                    evaluate();
+                    select();
+                    combine();
+                    mutate();
+                    if (generation.getBestCandidate() != oldBest) {
+                        bestChanged = 0;
+                        System.out.println("Generation: " + generation.getGenerationNumber() + " Best candidate: " + generation.getBestCandidate().toString());
+                    } else {
+                        bestChanged++;
+                    }
+                }
+                break;
+            case 1:
+                while (generation.getGenerationNumber() < generationsToSimulate) {
+                    evaluate();
+                    select();
+                    combine();
+                    mutate();
+                    System.out.println("Generation: " + generation.getGenerationNumber() + " Best candidate: " + generation.getBestCandidate().toString());
+                }
+                break;
         }
-
         System.out.println("Simulation finished.");
         System.out.println("Simulated " + generation.getGenerationNumber() + " generations. With " + populationSize + " chromosomes in each generation.");
         System.out.println("Best candidate: " + generation.getBestCandidate().toString());
@@ -178,5 +205,7 @@ public class Evolution {
     public void setCombinationProcess(CombinationProcess combinationProcess) {
         this.combinationProcess = combinationProcess;
     }
+
+
 }
 
