@@ -40,6 +40,22 @@ public class OwnSocketIOServer {
                 server.getBroadcastOperations().sendEvent(ServerEvents.START, data);
             }
         });
+
+        server.addEventListener(ServerEvents.DATA, Object.class, new DataListener<Object>() {
+            @Override
+            public void onData(SocketIOClient socketIOClient, Object data, AckRequest ackRequest) throws Exception {
+                System.out.println("OwnSocketIOServer:" + ServerEvents.DATA + " " + data);
+                server.getBroadcastOperations().sendEvent(ServerEvents.DATA, data);
+            }
+        });
+
+        server.addEventListener(ServerEvents.STOP, Object.class, new DataListener<Object>() {
+            @Override
+            public void onData(SocketIOClient socketIOClient, Object data, AckRequest ackRequest) throws Exception {
+                System.out.println("OwnSocketIOServer:" + ServerEvents.STOP + " " + data);
+                server.getBroadcastOperations().sendEvent(ServerEvents.STOP, data);
+            }
+        });
     }
 
 

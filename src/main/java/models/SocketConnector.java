@@ -2,6 +2,7 @@ package models;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
+import server.ServerEvents;
 
 import java.net.URISyntaxException;
 
@@ -20,6 +21,10 @@ public class SocketConnector {
 
     public Socket getSocket() {
         return socket;
+    }
+
+    public void sendMessage(String event, Object data) {
+        this.socket.emit(ServerEvents.DATA, data);
     }
 
 }

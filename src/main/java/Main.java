@@ -1,4 +1,4 @@
-import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import models.Chromosome;
 import models.Data;
 import models.Point2D;
@@ -29,7 +29,7 @@ public class Main {
 
         Evolution evolution = new Evolution(10000, 10000, 0.05, 0.3f);
         evolution.setCombinationProcess(CombinationProcess.KEEP_FIRST_PERC);
-        evolution.setSelectionProcess(SelectionProcess.SURIVAL);
+         evolution.setSelectionProcess(SelectionProcess.FIRSTN);
 
         evolution.runEvolution();
          */
@@ -38,10 +38,13 @@ public class Main {
         reader.readCsv();
         Chromosome<Point2D> chromosome = new Chromosome<>(Data.cities2d);
         SocketConnector socketConnector = new SocketConnector();
-        Socket socket = socketConnector.getSocket();
+        socketConnector.getSocket().on(ServerEvents.START, new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                socketConnector.sendMessage(ServerEvents.DATA, chromosome.toJSON());
+            }
+        });
 
-        socket.emit(ServerEvents.START, chromosome.toJSON());
-        System.out.println(chromosome.toJSON());
 
     }
 }
