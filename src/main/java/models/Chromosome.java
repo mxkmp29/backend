@@ -1,5 +1,7 @@
 package models;
 
+import com.google.gson.Gson;
+
 import java.util.*;
 
 public class Chromosome<T> {
@@ -78,6 +80,11 @@ public class Chromosome<T> {
 
     public void setSurvivalProb(double survivalProb) {
         this.survivalProb = survivalProb;
+    }
+
+    public String toJSON() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 
     @Override

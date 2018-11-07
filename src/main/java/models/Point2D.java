@@ -6,7 +6,9 @@ public class Point2D {
     private int y;
     private String name;
 
-    public Point2D(int x, int y) {
+
+    public Point2D(String name, int x, int y) {
+        this.name = name;
         this.x = x;
         this.y = y;
     }
