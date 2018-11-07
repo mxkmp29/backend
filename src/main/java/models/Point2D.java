@@ -2,12 +2,12 @@ package models;
 
 
 public class Point2D {
-    private int x;
-    private int y;
+    private float x;
+    private float y;
     private String name;
 
 
-    public Point2D(String name, int x, int y) {
+    public Point2D(String name, float x, float y) {
         this.name = name;
         this.x = x;
         this.y = y;
@@ -19,19 +19,19 @@ public class Point2D {
         return Math.sqrt(x + y);
     }
 
-    public int getX() {
+    public float getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(float x) {
         this.x = x;
     }
 
-    public int getY() {
+    public float getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public void setY(float y) {
         this.y = y;
     }
 
@@ -45,9 +45,6 @@ public class Point2D {
 
     @Override
     public String toString() {
-        return "Point2D{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+        return "(" + name + "|" + x + "," + y + ")";
     }
 }

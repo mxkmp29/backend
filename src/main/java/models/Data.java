@@ -9,4 +9,5 @@ public class Data {
     public static int startingPointIndex = 0;
     public static String SOCKET_URL = "localhost";
     public static int SOCKET_PORT = 8888;
+    public static SocketConnector socketConnector = new SocketConnector();
 }

@@ -1,15 +1,15 @@
 package reader;
 
 import models.Data;
-import models.Point;
 import models.Point2D;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
-public class Point2DReader implements CSVReaderInterface{
+public class Point2DReader implements CSVReaderInterface {
 
 
     private String csvFile;
@@ -20,6 +20,7 @@ public class Point2DReader implements CSVReaderInterface{
     }
 
     public Point2DReader(String csvFile) {
+        Data.cities2d = new ArrayList<Point2D>();
         this.csvFile = csvFile;
     }
 
@@ -34,7 +35,7 @@ public class Point2DReader implements CSVReaderInterface{
                 // use comma as separator
 
                 String[] entries = line.split(cvsSplitBy);
-                Point2D point = new Point2D(entries[0], Integer.parseInt(entries[1]), Integer.parseInt(entries[2]));
+                Point2D point = new Point2D(entries[0], Float.parseFloat(entries[1]), Float.parseFloat(entries[2]));
                 Data.cities2d.add(point);
                 idx++;
             }
