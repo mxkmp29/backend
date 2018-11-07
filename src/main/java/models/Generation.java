@@ -28,7 +28,7 @@ public class Generation<T> {
     }
 
     public Generation(List<Chromosome<T>> chromosomeList, Generation<T> generation) {
-        this(chromosomeList);
+        this.chromosomeList = chromosomeList;
         this.bestCandidate = generation.getBestCandidate();
         this.generationNumber = generation.getGenerationNumber() + 1;
     }
