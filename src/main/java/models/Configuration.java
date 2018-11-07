@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 import evolution.enums.CancelCriteria;
+import evolution.enums.CombinationProcess;
+import evolution.enums.SelectionProcess;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -19,11 +21,14 @@ public class Configuration {
     private float crossProbability;
     @SerializedName("populationToSimulate")
     private int populationToSimulate;
-    @SerializedName("CancelCriteria")
+    @SerializedName("cancelCriteria")
     private CancelCriteria cancelCriteria;
     @SerializedName("selectFromMatingPool")
     private boolean selectFromMatingPool;
-
+    @SerializedName("sombinationProcess")
+    private CombinationProcess combinationProcess;
+    @SerializedName("selectionProcess")
+    private SelectionProcess selectionProcess;
 
     public void jsonParse(String json) {
         Gson gson = new Gson();
@@ -44,6 +49,8 @@ public class Configuration {
             this.populationToSimulate = config.getPopulationToSimulate();
             this.cancelCriteria = config.getCancelCriteria();
             this.selectFromMatingPool = config.isSelectFromMatingPool();
+            this.combinationProcess = config.getCombinationProcess();
+            this.selectionProcess = config.getSelectionProcess();
         }
         System.out.println(this);
     }
@@ -104,6 +111,22 @@ public class Configuration {
         this.selectFromMatingPool = selectFromMatingPool;
     }
 
+    public CombinationProcess getCombinationProcess() {
+        return combinationProcess;
+    }
+
+    public void setCombinationProcess(CombinationProcess combinationProcess) {
+        this.combinationProcess = combinationProcess;
+    }
+
+    public SelectionProcess getSelectionProcess() {
+        return selectionProcess;
+    }
+
+    public void setSelectionProcess(SelectionProcess selectionProcess) {
+        this.selectionProcess = selectionProcess;
+    }
+
     @Override
     public String toString() {
         return "Configuration{" +
@@ -114,6 +137,8 @@ public class Configuration {
                 ", populationToSimulate=" + populationToSimulate +
                 ", cancelCriteria=" + cancelCriteria +
                 ", selectFromMatingPool=" + selectFromMatingPool +
+                ", combinationProcess=" + combinationProcess +
+                ", selectionProcess=" + selectionProcess +
                 '}';
     }
 }

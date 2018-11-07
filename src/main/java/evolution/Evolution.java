@@ -8,10 +8,12 @@ import evolution.enums.CancelCriteria;
 import evolution.enums.CombinationProcess;
 import evolution.enums.SelectionProcess;
 import evolution.selectionProcesses.*;
+import io.socket.emitter.Emitter;
 import models.*;
 import server.ServerEvents;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Evolution {
@@ -28,6 +30,9 @@ public class Evolution {
     private SelectionProcess selectionProcess = SelectionProcess.SURIVAL;
     private CombinationProcess combinationProcess = CombinationProcess.KEEP_FIRST_PERC;
 
+    private int stepInterval = 0;
+    private boolean stop = false;
+
     public Evolution(int generations, int populationSize, double mutationProb, float combinationProb, boolean selectFromMatingPool, CancelCriteria criteria) {
         this.generationsToSimulate = generations;
         this.populationSize = populationSize;
@@ -41,6 +46,16 @@ public class Evolution {
     public Evolution(Configuration config) {
         //TODO: generationToSimualate pro CancelCriteria im Frontend anders flaggen
         this(config.getPopulationToSimulate(), config.getPopulationSize(), config.getMutationProbability(), config.getCrossProbability(), config.isSelectFromMatingPool(), config.getCancelCriteria());
+        this.selectionProcess = config.getSelectionProcess();
+        this.combinationProcess = config.getCombinationProcess();
+        this.stepInterval = config.getStepInterval();
+        Data.socketConnector.getSocket().on(ServerEvents.STOP, new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                System.out.println("SocketIO1:" + ServerEvents.STOP + " " + Arrays.toString(objects));
+                Evolution.this.stop = true;
+            }
+        });
     }
 
     /**
@@ -162,9 +177,11 @@ public class Evolution {
     public void runEvolution() {
         int bestChanged = 0;
         Chromosome<Point2D> oldBest;
+
+        Data.socketConnector.sendMessage(ServerEvents.STOP, false);
         switch(criteria) {
             case NOT_CHANGED:
-                while (bestChanged < generationsToSimulate) {
+                while (bestChanged < generationsToSimulate && !stop) {
                     oldBest = generation.getBestCandidate();
                     evaluate();
                     select();
@@ -172,37 +189,41 @@ public class Evolution {
                     mutate();
                     if (generation.getBestCandidate() != oldBest) {
                         bestChanged = 0;
+                        Data.socketConnector.sendMessage(ServerEvents.DATA, generation.getBestCandidate().toJSON());
                         System.out.println("Generation: " + generation.getGenerationNumber() + " Best candidate: " + generation.getBestCandidate().toString());
                     } else {
                         System.out.println("Generation: " + generation.getGenerationNumber());
                         bestChanged++;
                     }
+                    try {
+                        Thread.sleep(this.stepInterval);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             case SIMULATE_N_GENERATION:
-                while (generation.getGenerationNumber() < generationsToSimulate) {
+                while (generation.getGenerationNumber() < generationsToSimulate && !stop) {
                     evaluate();
                     select();
                     combine();
                     mutate();
+                    Data.socketConnector.sendMessage(ServerEvents.DATA, generation.getBestCandidate().toJSON());
                     System.out.println("Generation: " + generation.getGenerationNumber() + " Best candidate: " + generation.getBestCandidate().toString());
+                    try {
+                        Thread.sleep(this.stepInterval);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
         }
+        Data.socketConnector.sendMessage(ServerEvents.STOP, true);
+        Data.socketConnector.sendMessage(ServerEvents.DATA, generation.getBestCandidate().toJSON());
         System.out.println("Simulation finished.");
         System.out.println("Simulated " + generation.getGenerationNumber() + " generations. With " + populationSize + " chromosomes in each generation.");
         System.out.println("Best candidate: " + generation.getBestCandidate().toString());
-        Data.socketConnector.sendMessage(ServerEvents.DATA, generation.getBestCandidate().toJSON());
+
     }
-
-    public void setSelectionProcess(SelectionProcess selectionProcess) {
-        this.selectionProcess = selectionProcess;
-    }
-
-    public void setCombinationProcess(CombinationProcess combinationProcess) {
-        this.combinationProcess = combinationProcess;
-    }
-
-
 }
 

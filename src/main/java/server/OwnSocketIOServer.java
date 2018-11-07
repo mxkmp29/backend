@@ -6,6 +6,7 @@ import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DataListener;
+import com.corundumstudio.socketio.listener.DisconnectListener;
 import models.Data;
 
 public class OwnSocketIOServer {
@@ -25,39 +26,53 @@ public class OwnSocketIOServer {
             }
         });
 
+        server.addDisconnectListener(new DisconnectListener() {
+            @Override
+            public void onDisconnect(SocketIOClient socketIOClient) {
+                System.out.println("OwnSocketIOServer: disconnected" + socketIOClient);
+            }
+        });
+
         server.addEventListener(ServerEvents.CONFIG, Object.class, new DataListener<Object>() {
             @Override
-            public void onData(SocketIOClient client, Object data, AckRequest ackSender) throws Exception {
-                System.out.println("OwnSocketIOServer:" + ServerEvents.CONFIG + " " + data);
-                server.getBroadcastOperations().sendEvent(ServerEvents.CONFIG, data);
+            public void onData(SocketIOClient socketIOClient, Object data, AckRequest ackSender) throws Exception {
+                sendEvent(socketIOClient, ServerEvents.START, data);
+
             }
         });
 
         server.addEventListener(ServerEvents.START, Object.class, new DataListener<Object>() {
             @Override
-            public void onData(SocketIOClient client, Object data, AckRequest ackSender) throws Exception {
-                System.out.println("OwnSocketIOServer:" + ServerEvents.START + " " + data);
-                server.getBroadcastOperations().sendEvent(ServerEvents.START, data);
+            public void onData(SocketIOClient socketIOClient, Object data, AckRequest ackSender) throws Exception {
+                sendEvent(socketIOClient, ServerEvents.START, data);
+
             }
         });
 
         server.addEventListener(ServerEvents.DATA, Object.class, new DataListener<Object>() {
             @Override
             public void onData(SocketIOClient socketIOClient, Object data, AckRequest ackRequest) throws Exception {
-                System.out.println("OwnSocketIOServer:" + ServerEvents.DATA + " " + data);
-                server.getBroadcastOperations().sendEvent(ServerEvents.DATA, data);
+                sendEvent(socketIOClient, ServerEvents.DATA, data);
+
             }
         });
 
         server.addEventListener(ServerEvents.STOP, Object.class, new DataListener<Object>() {
             @Override
             public void onData(SocketIOClient socketIOClient, Object data, AckRequest ackRequest) throws Exception {
-                System.out.println("OwnSocketIOServer:" + ServerEvents.STOP + " " + data);
-                server.getBroadcastOperations().sendEvent(ServerEvents.STOP, data);
+                sendEvent(socketIOClient, ServerEvents.STOP, data);
             }
         });
     }
 
+    private void sendEvent(SocketIOClient senderClient, String event, Object data) {
+        System.out.println("OwnSocketIOServer:" + event + " " + data);
+        for (SocketIOClient client : server.getAllClients()) {
+            if (client.getSessionId().equals(senderClient.getSessionId()) == false) {
+                client.sendEvent(event, data);
+            }
+        }
+    }
 
     public void startServer(){
         this.server.start();

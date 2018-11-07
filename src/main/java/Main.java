@@ -14,25 +14,26 @@ import java.util.Arrays;
 public class Main {
 
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
         Data.socketConnector.getSocket().on(ServerEvents.START, new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
-                Configuration config = new Configuration();
-                config.jsonParse(Arrays.toString(objects));
-                config.setPopulationToSimulate(1000);
-                config.setCancelCriteria(CancelCriteria.NOT_CHANGED);
-                config.setSelectFromMatingPool(true);
+                new Thread(() -> {
+                    Configuration config = new Configuration();
+                    config.jsonParse(Arrays.toString(objects));
+                    config.setPopulationToSimulate(100);
+                    config.setCancelCriteria(CancelCriteria.NOT_CHANGED);
+                    config.setSelectFromMatingPool(true);
+                    config.setCombinationProcess(CombinationProcess.KEEP_FIRST_PERC);
+                    config.setSelectionProcess(SelectionProcess.TOPN);
 
-                CSVReaderInterface reader = new Point2DReader("./Examples/2D_Test_Circle4.csv");
-                reader.readCsv();
+                    CSVReaderInterface reader = new Point2DReader("./Examples/2D_Test_Circle3.csv");
+                    reader.readCsv();
 
-                Evolution evolution = new Evolution(config);
-                evolution.setCombinationProcess(CombinationProcess.KEEP_FIRST_PERC); //TODO: Config
-                evolution.setSelectionProcess(SelectionProcess.TOPN); //TODO: Config
-
-                evolution.runEvolution();
+                    Evolution evolution = new Evolution(config);
+                    evolution.runEvolution();
+                }).start();
             }
         });
     }
