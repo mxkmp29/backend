@@ -33,7 +33,7 @@ public class Evolution {
     private int stepInterval = 0;
     private boolean stop = false;
 
-    public Evolution(int generations, int populationSize, double mutationProb, float combinationProb, boolean selectFromMatingPool, CancelCriteria criteria) {
+    public Evolution(int generations, int populationSize, double mutationProb, float combinationProb, boolean selectFromMatingPool) {
         this.generationsToSimulate = generations;
         this.populationSize = populationSize;
         this.mutationProb = mutationProb;
@@ -45,9 +45,10 @@ public class Evolution {
 
     public Evolution(Configuration config) {
         //TODO: generationToSimualate pro CancelCriteria im Frontend anders flaggen
-        this(config.getPopulationToSimulate(), config.getPopulationSize(), config.getMutationProbability(), config.getCrossProbability(), config.isSelectFromMatingPool(), config.getCancelCriteria());
-        this.selectionProcess = config.getSelectionProcess();
-        this.combinationProcess = config.getCombinationProcess();
+        this(config.getPopulationToSimulate(), config.getPopulationSize(), config.getMutationProbability(), config.getCrossProbability(), config.isSelectFromMatingPool());
+        this.criteria = CancelCriteria.values()[config.getCancelCriteria()];
+        this.selectionProcess = SelectionProcess.values()[config.getSelectionProcess()];
+        this.combinationProcess = CombinationProcess.values()[config.getCombinationProcess()];
         this.stepInterval = config.getStepInterval();
         Data.socketConnector.getSocket().on(ServerEvents.STOP, new Emitter.Listener() {
             @Override
@@ -204,11 +205,14 @@ public class Evolution {
                 break;
             case SIMULATE_N_GENERATION:
                 while (generation.getGenerationNumber() < generationsToSimulate && !stop) {
+                    oldBest = generation.getBestCandidate();
                     evaluate();
                     select();
                     combine();
                     mutate();
-                    Data.socketConnector.sendMessage(ServerEvents.DATA, generation.getBestCandidate().toJSON());
+                    if (generation.getBestCandidate() != oldBest) {
+                        Data.socketConnector.sendMessage(ServerEvents.DATA, generation.getBestCandidate().toJSON());
+                    }
                     System.out.println("Generation: " + generation.getGenerationNumber() + " Best candidate: " + generation.getBestCandidate().toString());
                     try {
                         Thread.sleep(this.stepInterval);

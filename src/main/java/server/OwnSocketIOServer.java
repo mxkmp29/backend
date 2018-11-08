@@ -36,7 +36,7 @@ public class OwnSocketIOServer {
         server.addEventListener(ServerEvents.CONFIG, Object.class, new DataListener<Object>() {
             @Override
             public void onData(SocketIOClient socketIOClient, Object data, AckRequest ackSender) throws Exception {
-                sendEvent(socketIOClient, ServerEvents.START, data);
+                sendEvent(socketIOClient, ServerEvents.CONFIG, data);
 
             }
         });

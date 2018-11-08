@@ -3,9 +3,6 @@ package models;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
-import evolution.enums.CancelCriteria;
-import evolution.enums.CombinationProcess;
-import evolution.enums.SelectionProcess;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -22,13 +19,13 @@ public class Configuration {
     @SerializedName("populationToSimulate")
     private int populationToSimulate;
     @SerializedName("cancelCriteria")
-    private CancelCriteria cancelCriteria;
+    private int cancelCriteria;
     @SerializedName("selectFromMatingPool")
     private boolean selectFromMatingPool;
     @SerializedName("sombinationProcess")
-    private CombinationProcess combinationProcess;
+    private int combinationProcess;
     @SerializedName("selectionProcess")
-    private SelectionProcess selectionProcess;
+    private int selectionProcess;
 
     public void jsonParse(String json) {
         Gson gson = new Gson();
@@ -54,6 +51,7 @@ public class Configuration {
         }
         System.out.println(this);
     }
+
 
     public int getStepInterval() {
         return stepInterval;
@@ -95,11 +93,11 @@ public class Configuration {
         this.populationToSimulate = populationToSimulate;
     }
 
-    public CancelCriteria getCancelCriteria() {
+    public int getCancelCriteria() {
         return cancelCriteria;
     }
 
-    public void setCancelCriteria(CancelCriteria cancelCriteria) {
+    public void setCancelCriteria(int cancelCriteria) {
         this.cancelCriteria = cancelCriteria;
     }
 
@@ -111,19 +109,19 @@ public class Configuration {
         this.selectFromMatingPool = selectFromMatingPool;
     }
 
-    public CombinationProcess getCombinationProcess() {
+    public int getCombinationProcess() {
         return combinationProcess;
     }
 
-    public void setCombinationProcess(CombinationProcess combinationProcess) {
+    public void setCombinationProcess(int combinationProcess) {
         this.combinationProcess = combinationProcess;
     }
 
-    public SelectionProcess getSelectionProcess() {
+    public int getSelectionProcess() {
         return selectionProcess;
     }
 
-    public void setSelectionProcess(SelectionProcess selectionProcess) {
+    public void setSelectionProcess(int selectionProcess) {
         this.selectionProcess = selectionProcess;
     }
 

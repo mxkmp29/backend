@@ -59,7 +59,6 @@ public class CombinationProcessKeepFirstPerc<T> implements CombinationProcessInt
             }
         }
 
-        //System.out.println(String.format("crossOver() Result: %s\nChromosom1: %s\nChromosom2: %s", crossedChromosome, chromosome1, chromosome2));
         return new Chromosome<T>(crossedChromosome);
     }
 }
