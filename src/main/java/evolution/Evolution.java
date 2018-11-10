@@ -13,7 +13,6 @@ import models.*;
 import server.ServerEvents;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Evolution {
@@ -33,27 +32,22 @@ public class Evolution {
     private int stepInterval = 0;
     private boolean stop = false;
 
-    public Evolution(int generations, int populationSize, double mutationProb, float combinationProb, boolean selectFromMatingPool) {
-        this.generationsToSimulate = generations;
-        this.populationSize = populationSize;
-        this.mutationProb = mutationProb;
-        this.combinationProb = combinationProb;
-        this.generation = new Generation<Point2D>(populationSize, Data.cities2d);
-        this.selectFromMatingPool = selectFromMatingPool;
-        this.criteria = criteria;
-    }
-
     public Evolution(Configuration config) {
-        //TODO: generationToSimualate pro CancelCriteria im Frontend anders flaggen
-        this(config.getPopulationToSimulate(), config.getPopulationSize(), config.getMutationProbability(), config.getCrossProbability(), config.isSelectFromMatingPool());
+        this.generationsToSimulate = config.getPopulationToSimulate();
+        this.populationSize = config.getPopulationSize();
+        this.mutationProb = config.getMutationProbability();
+        this.combinationProb = config.getCrossProbability();
+        this.generation = new Generation<Point2D>(this.populationSize, Data.cities2d);
+        this.selectFromMatingPool = config.isSelectFromMatingPool();
         this.criteria = CancelCriteria.values()[config.getCancelCriteria()];
         this.selectionProcess = SelectionProcess.values()[config.getSelectionProcess()];
         this.combinationProcess = CombinationProcess.values()[config.getCombinationProcess()];
         this.stepInterval = config.getStepInterval();
+        this.selectNPercent = config.getSelectNPercent();
+
         Data.socketConnector.getSocket().on(ServerEvents.STOP, new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
-                System.out.println("SocketIO1:" + ServerEvents.STOP + " " + Arrays.toString(objects));
                 Evolution.this.stop = true;
             }
         });

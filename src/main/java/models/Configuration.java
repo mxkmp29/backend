@@ -26,6 +26,10 @@ public class Configuration {
     private int combinationProcess;
     @SerializedName("selectionProcess")
     private int selectionProcess;
+    @SerializedName("selectNPercent")
+    private float selectNPercent;
+    @SerializedName("file")
+    private String filePath;
 
     public void jsonParse(String json) {
         Gson gson = new Gson();
@@ -48,8 +52,9 @@ public class Configuration {
             this.selectFromMatingPool = config.isSelectFromMatingPool();
             this.combinationProcess = config.getCombinationProcess();
             this.selectionProcess = config.getSelectionProcess();
+            this.selectNPercent = config.getSelectNPercent();
+            this.filePath = config.getFilePath();
         }
-        System.out.println(this);
     }
 
 
@@ -125,6 +130,22 @@ public class Configuration {
         this.selectionProcess = selectionProcess;
     }
 
+    public float getSelectNPercent() {
+        return selectNPercent;
+    }
+
+    public void setSelectNPercent(float selectNPercent) {
+        this.selectNPercent = selectNPercent;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
     @Override
     public String toString() {
         return "Configuration{" +
@@ -137,6 +158,9 @@ public class Configuration {
                 ", selectFromMatingPool=" + selectFromMatingPool +
                 ", combinationProcess=" + combinationProcess +
                 ", selectionProcess=" + selectionProcess +
+                ", selectNPercent=" + selectNPercent +
+                ", filePath='" + filePath + '\'' +
                 '}';
     }
+
 }

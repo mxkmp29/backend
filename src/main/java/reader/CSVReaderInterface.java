@@ -1,6 +1,8 @@
 package reader;
 
+import java.io.IOException;
+
 public interface CSVReaderInterface {
 
-    public void readCsv();
+    public void readCsv() throws IOException;
 }
